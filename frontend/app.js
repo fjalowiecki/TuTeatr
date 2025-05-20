@@ -1,50 +1,52 @@
-const app = document.getElementById('app');
+import { Header } from "./components/header.js";
+import { Card, CardHeader } from "./components/card.js";
+import { PlayList } from "./components/list.js";
+import { showPlayDetails } from "./views/playDetails.js"
 
-window.addEventListener('hashchange', router);
+const app = document.getElementById('app');
+const header = Header();
+
+window.addEventListener('popstate', router);
 window.addEventListener('load', router);
 
 function router() {
-    const hash = window.location.hash;
-    if (!hash || hash === '#/') {
+    const path = window.location.pathname;
+    if (path === '/' || path === '') {
         showPlayList();
-    } else if (hash.startsWith('#/play/')) {
-        const id = hash.split('/')[2];
-        showPlayDetails(id);
+    } else if (path.startsWith('/play/')) {
+        const id = path.split('/')[2];
+        showPlayDetails(id, app);
     } else {
         showNotFound();
     }
 }
 
-function showPlayList() {
-    fetch('/plays')
-    .then(res => res.json())
-    .then(plays => {
-        app.innerHTML = `
-        <h1>Plays</h1>
-        <ul>
-            ${plays.map(play => `<li><a href="#/play/${play.id}">${play.title}</a></li>`).join('')}
-        </ul>
-        `;
-    });
+function handleLinkClick(event) {
+    event.preventDefault();
+    const href = event.currentTarget.getAttribute('href');
+    history.pushState({}, '', href);
+    router();
 }
 
-function showPlayDetails(id) {
-    fetch(`/play/${id}`)
-    .then(res => {
-        if(!res.ok) throw new Error('not found');
-        return res.json();
-    })
-    .then(play => {
-        app.innerHTML =  `
-        <h1>Play details</h1>
-        <ul>
-            <li>title: ${play.title}</li>
-            <li>premiere: ${play.premiere}</li>
-            <li>director: ${play.director}</li>
-        </ul>
-        `;
-    })
-    .catch(() => showNotFound());
+async function getPlays() {
+    const res = await fetch('/api/plays');
+    const plays = await res.json();
+    return plays;
+}
+
+async function showPlayList() {
+    app.innerHTML = '';
+    const plays = await getPlays();
+    const playsList = PlayList(plays, handleLinkClick);
+
+    const card = Card();
+    const cardHeader = CardHeader('Recently added plays');
+
+    card.appendChild(cardHeader);
+    card.appendChild(playsList);
+
+    app.appendChild(header);
+    app.appendChild(card);
 }
 
 function showNotFound() {

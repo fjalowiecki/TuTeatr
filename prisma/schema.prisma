@@ -4,13 +4,22 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./imdb.db"
+  url      = "file:./database.db"
 }
 
 model Play {
   id          Int     @id @default(autoincrement())
   title       String
-  premiere        Int
-  director String
+  premiere    Int
+  director    String
   description String?
+  comments    Comment[]
+}
+
+model Comment {
+  id          Int @id @default(autoincrement())
+  content     String
+  createdAt   DateTime @default(now())
+  play        Play    @relation(fields: [playId], references: [id])
+  playId      Int
 }
