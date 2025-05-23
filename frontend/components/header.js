@@ -1,13 +1,11 @@
 export function Header() {
   const header = document.createElement('header');
   header.classList.add(
-    'bg-blue-700',
-    'text-white',
     'p-4',
     'flex',
     'justify-between',
     'items-center',
-    'shadow',
+    'mb-4',
   );
 
   const logo = Logo();
@@ -32,8 +30,9 @@ function Logo() {
 function Navigation() {
   const nav = document.createElement('nav');
 
-  const link1 = Link('link1', '#/');
-  const link2 = Link('link2', '#/');
+  const link1 = Link('Zaloguj', '#/');
+  link1.classList.add('text-blue-400');
+  const link2 = Link('Zarejestruj', '#/');
   nav.appendChild(link1);
   nav.appendChild(link2);
 

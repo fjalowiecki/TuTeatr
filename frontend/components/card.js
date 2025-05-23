@@ -1,24 +1,37 @@
-export function Card() {
-    const card = document.createElement('div');
-    card.classList.add(
-        'border',
+export function Card(text) {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add(
+        'flex',
+        'flex-col',
+    );
+    const body = CardBody();
+    const cardHeader = CardHeader(text);
+    wrapper.appendChild(cardHeader);
+    wrapper.appendChild(body);
+    return { wrapper, body, cardHeader };
+}
+
+function CardBody() {
+    const body = document.createElement('div');
+    body.classList.add(
+        'space-y-6',
+        'border-2',
+        'border-blue-400',
         'rounded-lg',
-        'p-4',
-        'shadow-sm',
+        'p-2',
         'bg-white',
         'flex',
         'flex-col',
-        'm-4',
+        'ml-4',
     );
-    return card;
+    return body;
 }
 
 export function CardHeader(text) {
     const cardHeader = document.createElement('h2');
     cardHeader.classList.add(
-        'text-lg',
-        'font-semibold',
-        'mb-2'
+        'ml-8',
+        'mb-1',
     );
     cardHeader.textContent = text;
     return cardHeader;

@@ -1,5 +1,4 @@
-import { Header } from "../components/header.js";
-import { Card, CardHeader } from "../components/card.js";
+import { Card } from "../components/card.js";
 import { PlayDetailsList } from "../components/list.js";
 
 async function getPlay(id) {
@@ -9,7 +8,7 @@ async function getPlay(id) {
 }
 
 function showCommentForm(onSubmit) {
-    const card = Card();
+    const card = Card("Add a comment");
     const form = document.createElement('form');
     const input = document.createElement('input');
     input.type = 'text';
@@ -19,7 +18,7 @@ function showCommentForm(onSubmit) {
     button.type = 'submit';
     button.textContent = 'Add';
 
-    card.appendChild(form);
+    card.body.appendChild(form);
     form.appendChild(input);
     form.appendChild(button);
 
@@ -29,7 +28,7 @@ function showCommentForm(onSubmit) {
         input.value = '';
     });
 
-    return card;
+    return card.wrapper;
 }
 
 function showCommentsSection(play) {
@@ -41,9 +40,9 @@ function showCommentsSection(play) {
 
     if (play.comments && play.comments.length > 0) {
         play.comments.forEach(comment => {
-            const commentCard = Card();
-            commentCard.textContent = `${comment.content}`;
-            section.appendChild(commentCard);
+            const commentCard = Card("");
+            commentCard.body.textContent = `${comment.content}`;
+            section.appendChild(commentCard.wrapper);
         });
     }
     return section;
@@ -51,15 +50,12 @@ function showCommentsSection(play) {
 
 export async function showPlayDetails(id, container) {
     container.innerHTML = '';
-    const header = Header();
     const play = await getPlay(id);
 
-    const playCard = Card();
-    const cardHeader = CardHeader('Play details');
+    const playCard = Card('Play details');
 
     const playDetailsList = PlayDetailsList(play);
-    playCard.appendChild(cardHeader);
-    playCard.appendChild(playDetailsList);
+    playCard.body.appendChild(playDetailsList);
 
     const commentsSection = showCommentsSection(play);
     const commentForm = showCommentForm(async (content) => {
@@ -71,8 +67,7 @@ export async function showPlayDetails(id, container) {
         location.reload();
     });
 
-    container.appendChild(header);
-    container.appendChild(playCard);
+    container.appendChild(playCard.wrapper);
     container.appendChild(commentsSection);
     container.appendChild(commentForm);
 }
